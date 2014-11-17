@@ -11,25 +11,73 @@
 	<div id="storage">
 		Inventaire :<br>
 		<div id="insidestorage">
-			<span id="gold-bar">0 pièce</span><br>
+			<span id="gold-bar">0 pièce</span><br/>			
+			<a href="javascript:showstorage();">Voir inventaire complet</a>
 		</div>
-		Tu as mangé : <span class="pizzacount">0 pizza</span><br>
+		Tu as mangé : <span class="pizzacount">0 pizza</span><br/>
+	</div>
+	<div class="alert alert-theshop">
+		<b>Le magasin</b><br/>
+		Que puis-je pour vous ?<br/><br/>
+		Acheter :<br/>
+		<input type="button" id="pelle" value="Une pelle" onclick="buy('pelle',1)" class="buy-shovel"> (5 pièces)<br/>
+		<input type="button" value="Ingrédient" onclick="buy('pizza',1)" class="buy-pizza"> (2 pièces)<br/>
+		<input type="button" value="Fermer la fenêtre" onclick="closemessage()">
 	</div>
 	<div class="modal"></div>
 	<div class="fader"></div>
+	<div class="alert alert-storage">
+		<b>Inventaire :</b><br/>
+		<div id="insidestorage">
+			<div id="otheritems"></div>
+		</div>
+		<br><br>
+		<input type="button" value="Close this window" onclick="closemessage()">
+	</div>
+	<div class="alert alert-sign">
+		<b>un puit !</b><br>
+		Vous avez trouvé un puit<br><br>
+		<input type="button" value="Visiter le puit" onclick="dighole()">
+		<input type="button" value="Fermer la fenêtre" onclick="closemessage()">
+	</div>
 	<div id="otheralerts"></div>
 
 	<div id="land">
-		<pre id="home" class="building theshop" title="Maison">
-		     ~
-		   ~
-		 _u__
-		/____\
-		|[][]|
-		|[]..|
-		|____|
+		<pre id="home" class="building home" title="Maison">
+     ~
+   ~
+ _u__
+/____\
+|[][]|
+|[]..|
+|____|
+		</pre>
+
+		<pre class="building hidden theshop" title="Magasin">
+     ~
+   ~
+ _u______
+/__SHOP__\
+|[][][][]|
+|[][][][]|
+|___[]___|
 		</pre>
 	</div>
+
+	<pre class="building hidden sign" title="Un puit">
+
+
+
+ __
+[__]
+_||_
+</pre>
+<pre class="building hidden chest" title="Tresor">
+
+
+ _
+|_|
+</pre>
 
 	<div id="credits">
 		<a href="javascript:showcredits();">Règles du jeu</a>

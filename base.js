@@ -44,14 +44,46 @@ function checkthings() {
 		$('#gold-bar').html("");
 		$('#gold-bar').html(coins + ' pièces');
 	}
-	
+	if(coins >= 10){
+		$(".theshop").removeClass("hidden");
+	}
+	// Update items
+	$("#otheritems").html("");
+	for(i=0;i<items.length;i++) {
+		thisitem=items[i];
+		if(thisitem.owned != 0) {
+			if(thisitem.owned != 1) {
+				plural="s";
+			}
+			else {
+				plural="";
+			}
+			thestorage=$("#otheritems").html();
+			$("#otheritems").html(thestorage+"<br>"+thisitem.owned+" "+thisitem.name+plural);
+
+		}
+	}	
+
+	// Check buildings
+	if(items[0].owned > 0){
+		$(".sign").removeClass("hidden");
+	}
 }
+
+function dighole(){
+	$(".chest").removeClass("hidden");
+}
+//items
+var items = [];
+items.push({"name":"pelle","price":5,"owned":0	});
 
 $(document).ready(function(){
 	//initialisation des parametres
 	startgame();
 	coins = 0;
 	coins_per_second = 1;
+	cooking = false;
+	pelle_cassée = false;
 
 	// Ajout de piece toutes les secondes
 	setInterval(function() {
@@ -59,11 +91,44 @@ $(document).ready(function(){
 		checkthings();
 	},1000);
 
-	//items
-	var items = [];
-
 	$("#home").click(function() {
 		closemessage();
-		makealert('home', 'Clique maison', 'Maison', true);
+		if(cooking)
+			makealert('home', 'Maison', 'Ici tu peux te faire à manger<br/><input type="button" onclick="cooking()" value="Cuisiner"/>', true);
+		else
+			makealert('home', 'Maison', 'Tu ne peux rien faire ici tant que tu n\'as pas assez d\'argent', true);
 	});
+
+	$(".theshop").click(function() {
+		closemessage();
+		$(".alert-theshop").fadeIn("fast");
+		$(".modal").fadeIn("fast");
+	});
+
+	$(".sign").click(function() {
+		//if(!passthief) {
+			closemessage();
+			$(".alert-sign").fadeIn("fast");
+			$(".modal").fadeIn("fast");
+		//}
+	});
+
 });
+
+function buy(item,number) {
+	for(i=0;i<items.length;i++) {
+		thisitem = items[i];
+		if(item == thisitem.name) {
+			if(coins >= thisitem.price*number) {
+				valid = true;
+				if(valid) {
+					coins -= thisitem.price*number;
+					thisitem.owned += number;
+					checkthings();
+				}
+			}
+			break;
+		}
+	}
+	closemessage();
+}
