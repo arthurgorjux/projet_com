@@ -36,6 +36,12 @@ function checkthings() {
 	updateitems();
 	checkitem();
 	updatestatus();*/
+
+	if(life_count >= 10)
+		life_count = 10;
+	//if(life_count <= 0)
+		//TODO : dead();
+
 	//Update coins
 	if(coins == 1){
 		$('#gold-bar').html("");
@@ -44,8 +50,19 @@ function checkthings() {
 		$('#gold-bar').html("");
 		$('#gold-bar').html(coins + ' pièces');
 	}
+	$('#life_count').html("");
+	$('#life_count').html(life_count);
 	if(coins >= 10){
 		$(".theshop").removeClass("hidden");
+	}
+
+	if(pain > 0 && first_time_pain){
+		$('#insidestorage').append('<br/><input type="button" value="Manger du pain" onclick="eat(\'pain\')"/>');
+		first_time_pain = false;
+	}
+	if(pizza > 0 && first_time_pizza){
+		$('#insidestorage').append('<br/><input type="button" value="Manger une pizza" onclick="eat(\'pizza\')"/>');
+		first_time_pizza = false;
 	}
 	// Update items
 	$("#otheritems").html("");
@@ -70,20 +87,26 @@ function checkthings() {
 	}
 }
 
-function dighole(){
-	$(".chest").removeClass("hidden");
-}
-//items
+//Varibales globales
 var items = [];
-items.push({"name":"pelle","price":5,"owned":0	});
+items.push({"name":"pelle","price":5,"owned":0});
+items.push({"name":"food", "price":2, "owned":0});
+items.push({"name":"pain", "price":0, "owned":0});
+items.push({"name":"pizza", "price":0, "owned":0});
 
 $(document).ready(function(){
 	//initialisation des parametres
 	startgame();
 	coins = 0;
 	coins_per_second = 1;
-	cooking = false;
+	food = 0;
+	pizza = 0;
+	pain = 0;
+	life_count = 10;
+	//cooking = false;
 	pelle_cassée = false;
+	first_time_pain = true;
+	first_time_pizza = true;
 
 	// Ajout de piece toutes les secondes
 	setInterval(function() {
@@ -91,10 +114,17 @@ $(document).ready(function(){
 		checkthings();
 	},1000);
 
+	// Retire un point de vie par minute
+	setInterval(function() {
+		life_count -= 1;
+		checkthings();
+	},60*1000);
+
 	$("#home").click(function() {
 		closemessage();
-		if(cooking)
-			makealert('home', 'Maison', 'Ici tu peux te faire à manger<br/><input type="button" onclick="cooking()" value="Cuisiner"/>', true);
+		checkthings();
+		if(items[1].owned > 0)
+			makealert('home', 'Maison', 'Ici tu peux te faire à manger<br/><input type="button" onclick="cooking(\'pain\')" value="Cuisiner du pain"/><br/><input type="button" onclick="cooking(\'pizza\')" value="Cuisiner une pizza"/>', true);
 		else
 			makealert('home', 'Maison', 'Tu ne peux rien faire ici tant que tu n\'as pas assez d\'argent', true);
 	});
@@ -106,14 +136,55 @@ $(document).ready(function(){
 	});
 
 	$(".sign").click(function() {
-		//if(!passthief) {
 			closemessage();
 			$(".alert-sign").fadeIn("fast");
 			$(".modal").fadeIn("fast");
-		//}
 	});
 
 });
+function dighole(){
+	closemessage()
+	makealert('chest', "Un trésor", "En fouillant le puit, tu as trouver la clé de l'usine !", true);
+	$('#factory').removeClass('hidden');
+	coins_per_second += 1
+}
+
+function cooking(name){
+	switch(name){
+		case 'pain':
+			if(food >= 1)
+				food--;
+				pain++;
+		break;
+		case 'pizza':
+			if(food >= 1){
+				food -= 2;
+				pizza++;
+			}
+		break;
+		case '':
+		break;
+	}
+	checkthings();
+}
+function eat(name){
+	switch(name){
+		case 'pain':
+			if(pain >= 1)
+				pain--;
+				life_count++;
+		break;
+		case 'pizza':
+			if(pizza >= 1){
+				pizza--;
+				life_count += 1;
+			}
+			
+		break;
+		case '':
+		break;
+	}
+}
 
 function buy(item,number) {
 	for(i=0;i<items.length;i++) {
@@ -125,6 +196,8 @@ function buy(item,number) {
 					coins -= thisitem.price*number;
 					thisitem.owned += number;
 					checkthings();
+					if(item == "food")
+						food ++;
 				}
 			}
 			break;
