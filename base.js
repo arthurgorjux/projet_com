@@ -56,13 +56,21 @@ function checkthings() {
 		$(".theshop").removeClass("hidden");
 	}
 
-	if(pain > 0 && first_time_pain){
-		$('#insidestorage').append('<br/><input type="button" value="Manger du pain" onclick="eat(\'pain\')"/>');
+	if(items[2].owned > 0 && first_time_pain){
+		$('#insidestorage').append('<br/><input id="eat_pain "type="button" value="Manger du pain" onclick="eat(\'pain\')"/>');
 		first_time_pain = false;
 	}
-	if(pizza > 0 && first_time_pizza){
-		$('#insidestorage').append('<br/><input type="button" value="Manger une pizza" onclick="eat(\'pizza\')"/>');
+	if(items[3].owned > 0 && first_time_pizza){
+		$('#insidestorage').append('<br/><input id="eat_pizza" type="button" value="Manger une pizza" onclick="eat(\'pizza\')"/>');
 		first_time_pizza = false;
+	}
+	if(items[2].owned == 0){
+		$('#insidestorage').remove('#eat_pain');
+		first_time_pain = true;
+	}
+	if(items[3].owned == 0){
+		$('#insidestorage').remove('#eat_pizza');
+		first_time_pizza = true;
 	}
 	// Update items
 	$("#otheritems").html("");
@@ -126,7 +134,7 @@ $(document).ready(function(){
 		if(items[1].owned > 0)
 			makealert('home', 'Maison', 'Ici tu peux te faire à manger<br/><input type="button" onclick="cooking(\'pain\')" value="Cuisiner du pain"/><br/><input type="button" onclick="cooking(\'pizza\')" value="Cuisiner une pizza"/>', true);
 		else
-			makealert('home', 'Maison', 'Tu ne peux rien faire ici tant que tu n\'as pas assez d\'argent', true);
+			makealert('home', 'Maison', 'Tu ne peux pas cuisiner si tu n\'as pas d\'ingrédients, vas en acheter !', true);
 	});
 
 	$(".theshop").click(function() {
@@ -152,38 +160,45 @@ function dighole(){
 function cooking(name){
 	switch(name){
 		case 'pain':
-			if(food >= 1)
-				food--;
-				pain++;
-		break;
-		case 'pizza':
-			if(food >= 1){
-				food -= 2;
-				pizza++;
+			if(items[1].owned > 0){
+				items[1].owned--;
+				items[2].owned++;
+				checkthings();
+			}else{
+				makealert('not-enough-food', 'Pas assez d\'ingrédient', 'Tu n\'as pas assez d\'ingrédient ', true);	
 			}
 		break;
-		case '':
+		case 'pizza':
+			if(items[1].owned > 1){
+				items[1].owned-= 2;
+				items[3].owned++;				
+				checkthings();
+			}else{
+				makealert('not-enough-food', 'Pas assez d\'ingrédient', 'Tu n\'as pas assez d\'ingrédient ', true);	
+			}
 		break;
 	}
-	checkthings();
+	closemessage();
 }
 function eat(name){
 	switch(name){
 		case 'pain':
-			if(pain >= 1)
-				pain--;
+			if(items[name].owned > 0){
 				life_count++;
+				items[2].owned--;
+				checkthings();
+			}else
+				makealert('not-enough-' + name, 'Pas assez de ' + name, 'Tu n\'as pas assez de ' + name, true);
 		break;
 		case 'pizza':
-			if(pizza >= 1){
-				pizza--;
-				life_count += 1;
-			}
-			
+			if(items[name].owned > 0){
+				life_count++;
+				items[3].owned--;
+				checkthings();
+			}else
+				makealert('not-enough-' + name, 'Pas assez de ' + name, 'Tu n\'as pas assez de ' + name, true);
 		break;
-		case '':
-		break;
-	}
+	}	
 }
 
 function buy(item,number) {
