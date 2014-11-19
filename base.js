@@ -41,7 +41,8 @@ function checkthings() {
 		life_count = 10;
 	//if(life_count <= 0)
 		//TODO : dead();
-
+	if(life_count == 1)
+		makealert('pas-bien', 'Bientôt la fin ?', 'Il te reste un point de vie, manges vite pour ne pas mourir !', true);
 	//Update coins
 	if(coins == 1){
 		$('#gold-bar').html("");
@@ -89,6 +90,14 @@ function checkthings() {
 		}
 	}	
 
+	if(can_buy_factory){
+		closemessage();
+		makealert('buy-factory-ok', 'Acheter l\'usine', 'Tu peux désormais acheter l\'usine', true);
+	}
+	if(buy_factory){
+		$(".theshop_cv").removeClass("hidden");
+	}
+
 	// Check buildings
 	if(items[0].owned > 0){
 		$(".sign").removeClass("hidden");
@@ -101,6 +110,10 @@ items.push({"name":"pelle","price":5,"owned":0});
 items.push({"name":"food", "price":2, "owned":0});
 items.push({"name":"pain", "price":0, "owned":0});
 items.push({"name":"pizza", "price":0, "owned":0});
+items.push({"name":"formation", "price":0, "owned":0});
+items.push({"name":"competences", "price":0, "owned":0});
+items.push({"name":"expérience professionnelle", "price":0, "owned":0});
+items.push({"name":"autres", "price":0, "owned":0});
 
 $(document).ready(function(){
 	//initialisation des parametres
@@ -115,6 +128,9 @@ $(document).ready(function(){
 	pelle_cassée = false;
 	first_time_pain = true;
 	first_time_pizza = true;
+	buy_factory = true;
+	cipherstep = 0;
+	can_buy_factory = false;
 
 	// Ajout de piece toutes les secondes
 	setInterval(function() {
@@ -132,7 +148,7 @@ $(document).ready(function(){
 		closemessage();
 		checkthings();
 		if(items[1].owned > 0)
-			makealert('home', 'Maison', 'Ici tu peux te faire à manger<br/><input type="button" onclick="cooking(\'pain\')" value="Cuisiner du pain"/><br/><input type="button" onclick="cooking(\'pizza\')" value="Cuisiner une pizza"/>', true);
+			makealert('home', 'Maison', 'Ici tu peux te faire à manger pour récupérer des points de vie<br/><input type="button" onclick="cooking(\'pain\')" value="Cuisiner du pain"/><br/><input type="button" onclick="cooking(\'pizza\')" value="Cuisiner une pizza"/>', true);
 		else
 			makealert('home', 'Maison', 'Tu ne peux pas cuisiner si tu n\'as pas d\'ingrédients, vas en acheter !', true);
 	});
@@ -143,13 +159,136 @@ $(document).ready(function(){
 		$(".modal").fadeIn("fast");
 	});
 
+	$(".theshop_cv").click(function(){
+		closemessage();
+		$(".alert-theshop_cv").fadeIn("fast");
+		$(".modal").fadeIn("fast");
+	});
+
 	$(".sign").click(function() {
 			closemessage();
 			$(".alert-sign").fadeIn("fast");
 			$(".modal").fadeIn("fast");
 	});
+	$("#factory").click(function() {
+		if(!buy_factory) {
+			closemessage();
+			makealert("gold-factory","Usine","Statut: Tu travailles à l'usine et tu gagnes " + coins_per_second + " pièces par seconde comme salaire !<br><br><input type=\"button\" value=\"Travailler à l'usine\" onclick=\"makebosshappy()\">",true)
+		}
+		else{
+			closemessage();
+			makealert("buy-factory-new","Usine","Statut: Tu es le patron de l'usine ! :o<br><br>Tu gagnes désormais " + coins_per_second + " pièces par seconde !",true)
+		}
+	});
 
 });
+
+function makebosshappy() {
+	closemessage();
+	makealert("how-to-make-boss-happy","Rendre le patron heureux","Pour le rendre heureux et gagner quelques pièces, tu peux faire :<br><br><input type='button' value='Répondre à des énigmes' onclick='ciphercode()'>",true);
+}
+
+function ciphercode() {
+
+	closemessage();
+	// TODO : finir les énigmes
+	if(cipherstep==0) {
+		codetocipher="Donner le prénom et le nom du créateur.";
+	}
+	else if(cipherstep==1) {
+		codetocipher="Donner le nom de la formation du créateur.";
+	}
+	else if(cipherstep==2) {
+		codetocipher="Om s ept;f gi;; pg n;pvld";
+	}
+	else if(cipherstep==3) {
+		codetocipher="VGhlIHBsYW50IGlzIGZhbW91cyBiZWNhdXNlIG9mIHR<br>oZSBhYmlsaXR5IHRvIGN1cmUgc29tZSBkaXNlYXNlcw==";
+	}
+	else if(cipherstep==4) {
+		codetocipher="towiiag g se   rir,oaoan   ft ofo srtod tddyi ot mdy lugelelmwon foemsthiuaa ttclntclga  bhhs";
+	}
+
+	if(cipherstep<5) {
+		makealert("help-ciphering","Enigmes","Ton patron adore les énigmes, mais il est débordé. Si tu peux l'aider, il te donnera une récompense !<br><br>Enigme #"+(cipherstep+1)+":<br>"+codetocipher+"<br><input type='text' id='cipherthecodeanswer'><br><br><input type='button' value='Valider' onclick='checkchipher()'>",true);
+	}
+	else {
+		makealert("no-more-codes","Plus d'énigmes","Désolé, il n'y a plus d'énigme",true);
+	}
+}
+function checkchipher() {
+
+	/*
+	
+		Don't cheat please!!!
+		PLEASE!!!
+		
+	*/
+
+	if(cipherstep==0) {
+		if($("#cipherthecodeanswer").val().toLowerCase()=="arthur gorjux") {
+			cipherstep++;
+			coins += 100;
+			closemessage();
+			alert("Elle était facile, tu reçois 100 pièces"); 
+		}
+		else {
+			alert('Faux !');
+		}
+	}
+	else if(cipherstep==1) {
+		if($("#cipherthecodeanswer").val().toLowerCase()=="m1ice") {
+			cipherstep++;
+			coins += 500;
+			closemessage();
+			alert("Juste ! Tu reçois 500 pièces !");
+		}
+		else {
+			alert('Faux !');
+		}
+	}
+	else if(cipherstep==2) {
+		if($("#cipherthecodeanswer").val().toLowerCase()=="in a world full of blocks") {
+			cipherstep++;
+			goldbar+=2000;
+			closemessage();
+			alert("Correct! You get 2000 gold bars!"); 
+		}
+		else {
+			alert('Wrong!');
+		}
+	}
+	else if(cipherstep==3) {
+		if($("#cipherthecodeanswer").val().toLowerCase()=="the plant is famous because of the ability to cure some diseases") {
+			cipherstep++;
+			goldbar+=2500;
+			closemessage();
+			alert("Correct! You get 2500 gold bars!"); 
+		}
+		else {
+			alert('Wrong!');
+		}
+	}
+	else if(cipherstep==4) {
+		if($("#cipherthecodeanswer").val().toLowerCase()=="the gold factory was built long time ago, and it is the most famous gold factory in the world") {
+			cipherstep++;
+			goldbar+=7500;
+			closemessage();
+			alert("Correct! Because this one is a hard one, you get 7500 gold bars!"); 
+		}
+		else {
+			alert('Wrong!');
+		}
+	}
+}
+
+function buy_factory(){
+	if(coins >= 1000){
+		coins -= 1000;
+		buy_factory = true;
+		checkthings();
+		closemessage();
+	}
+}
 function dighole(){
 	closemessage()
 	makealert('chest', "Un trésor", "En fouillant le puit, tu as trouver la clé de l'usine !", true);
@@ -183,7 +322,7 @@ function cooking(name){
 function eat(name){
 	switch(name){
 		case 'pain':
-			if(items[name].owned > 0){
+			if(items[2].owned > 0){
 				life_count++;
 				items[2].owned--;
 				checkthings();
@@ -191,7 +330,7 @@ function eat(name){
 				makealert('not-enough-' + name, 'Pas assez de ' + name, 'Tu n\'as pas assez de ' + name, true);
 		break;
 		case 'pizza':
-			if(items[name].owned > 0){
+			if(items[3].owned > 0){
 				life_count++;
 				items[3].owned--;
 				checkthings();

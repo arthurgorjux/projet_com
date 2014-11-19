@@ -20,6 +20,16 @@
 		<b>Le magasin</b><br/>
 		Que puis-je pour vous ?<br/><br/>
 		Acheter :<br/>
+		<input type="button" value="Formation" onclick="buy('pelle',1)" class="buy-formation"> (5 pièces)<br/>
+		<input type="button" value="Competences" onclick="buy('food',1)" class="buy-competence"> (2 pièces)<br/>
+		<input type="button" value="Expériences professionnelles" onclick="buy('food',1)" class="buy-competence"> (2 pièces)<br/>
+		<input type="button" value="Autres" onclick="buy('food',1)" class="buy-competence"> (2 pièces)<br/>
+		<input type="button" value="Fermer la fenêtre" onclick="closemessage()">
+	</div>
+	<div class="alert alert-theshop_cv">
+		<b>Le magasin CV</b><br/>
+		Que puis-je pour vous ?<br/><br/>
+		Acheter :<br/>
 		<input type="button" id="pelle" value="Une pelle" onclick="buy('pelle',1)" class="buy-shovel"> (5 pièces)<br/>
 		<input type="button" value="Ingrédient" onclick="buy('food',1)" class="buy-pizza"> (2 pièces)<br/>
 		<input type="button" value="Fermer la fenêtre" onclick="closemessage()">
@@ -72,7 +82,21 @@
 |[][][][]|
 |___[]___|
 		</pre>
-	</div>
+
+		<pre class="building hidden theshop_cv" title="Magasin CV">
+
+
+
+
+
+     ~
+   ~
+ _u__________
+/__SHOP CV___\
+|[][][][][][]|
+|[][][][][][]|
+|_____[]_____|
+		</pre>
 
 	<pre class="building hidden sign" title="Un puit">
 
@@ -102,6 +126,7 @@ _||_
   ;. :  ;    ###:__.
 _.'__`._;_______:__:
 </pre>
+	</div>
 
 	<div id="credits">
 		<a href="javascript:showcredits();">Règles du jeu</a>
