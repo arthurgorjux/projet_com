@@ -65,14 +65,6 @@ function checkthings() {
 		$('#insidestorage').append('<br/><input id="eat_pizza" type="button" value="Manger une pizza" onclick="eat(\'pizza\')"/>');
 		first_time_pizza = false;
 	}
-	if(items[2].owned == 0){
-		$('#insidestorage').remove('#eat_pain');
-		first_time_pain = true;
-	}
-	if(items[3].owned == 0){
-		$('#insidestorage').remove('#eat_pizza');
-		first_time_pizza = true;
-	}
 	// Update items
 	$("#otheritems").html("");
 	for(i=0;i<items.length;i++) {
@@ -128,7 +120,7 @@ $(document).ready(function(){
 	pelle_cassée = false;
 	first_time_pain = true;
 	first_time_pizza = true;
-	buy_factory = true;
+	buy_factory = false;
 	cipherstep = 0;
 	can_buy_factory = false;
 
