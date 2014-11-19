@@ -52,6 +52,9 @@ audio:not([controls]) {
 [hidden] {
     display: none;
 }
+.storage-cv{
+	display: none;
+}
 
 
 /* =============================================================================

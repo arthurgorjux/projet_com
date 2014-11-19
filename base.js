@@ -20,6 +20,30 @@ function showstorage() {
 	$(".modal").fadeIn("fast");
 }
 
+function showcv(){
+	var div = "<div>";
+	closemessage();
+	if(items[4].owned == 0 && items[5].owned == 0 && items[6].owned == 0 && items[7].owned == 0){
+		makealert('cv-empty', 'CV vide', 'Pour le moment, le CV est vide !', true);
+	}
+	if(items[4].owned == 1){
+		div += '<div class="formation"><h3>Formation</h3><p>Blabla</p></div>';
+	}
+	if(items[5].owned == 1){
+		div += '<div class="competences"><h3>Compétences</h3><p>Blabla</p></div>';
+	}
+	if(items[6].owned == 1){
+		div += '<div class="experience"><h3>Expérience professionnelle</h3><p>Blabla</p></div>';
+	}
+	if(items[7].owned == 1){
+		div += '<div class="autres"><h3>Autres</h3><p>Blabla</p></div>';
+	}
+	div += '</div>';
+	if(div != "<div></div>"){
+		makealert('cv-full', 'CV Arthur Gorjux', div, true);
+	}
+}
+
 function showcredits() {
 	closemessage();
 	makealert("credits","Règles du jeu","<div style='max-height:300px; overflow-y:auto;'><br>Blabla blabla</div>",true)
@@ -82,9 +106,10 @@ function checkthings() {
 		}
 	}	
 
-	if(can_buy_factory){
+	if(can_buy_factory && first_time_factory){
 		closemessage();
 		makealert('buy-factory-ok', 'Acheter l\'usine', 'Tu peux désormais acheter l\'usine', true);
+		first_time_factory = false;
 	}
 	if(buy_factory){
 		$(".theshop_cv").removeClass("hidden");
@@ -98,7 +123,7 @@ function checkthings() {
 
 //Varibales globales
 var items = [];
-items.push({"name":"pelle","price":5,"owned":0});
+items.push({"name":"torche","price":5,"owned":0});
 items.push({"name":"food", "price":2, "owned":0});
 items.push({"name":"pain", "price":0, "owned":0});
 items.push({"name":"pizza", "price":0, "owned":0});
@@ -116,10 +141,9 @@ $(document).ready(function(){
 	pizza = 0;
 	pain = 0;
 	life_count = 10;
-	//cooking = false;
-	pelle_cassée = false;
 	first_time_pain = true;
 	first_time_pizza = true;
+	first_time_factory = true;
 	buy_factory = false;
 	cipherstep = 0;
 	can_buy_factory = false;
@@ -163,11 +187,14 @@ $(document).ready(function(){
 			$(".modal").fadeIn("fast");
 	});
 	$("#factory").click(function() {
-		if(!buy_factory) {
+		if(!buy_factory && !can_buy_factory) {
 			closemessage();
 			makealert("gold-factory","Usine","Statut: Tu travailles à l'usine et tu gagnes " + coins_per_second + " pièces par seconde comme salaire !<br><br><input type=\"button\" value=\"Travailler à l'usine\" onclick=\"makebosshappy()\">",true)
+		}else if(!buy_factory && can_buy_factory){
+			closemessage();
+			makealert("gold-factory","Usine","Statut: Tu travailles à l'usine et tu gagnes " + coins_per_second + " pièces par seconde comme salaire !<br><br><input type=\"button\" value=\"Acheter l'usine\" onclick=\"buy_factory()\">",true)
 		}
-		else{
+		else if(buy_factory && can_buy_factory){
 			closemessage();
 			makealert("buy-factory-new","Usine","Statut: Tu es le patron de l'usine ! :o<br><br>Tu gagnes désormais " + coins_per_second + " pièces par seconde !",true)
 		}
@@ -177,7 +204,7 @@ $(document).ready(function(){
 
 function makebosshappy() {
 	closemessage();
-	makealert("how-to-make-boss-happy","Rendre le patron heureux","Pour le rendre heureux et gagner quelques pièces, tu peux faire :<br><br><input type='button' value='Répondre à des énigmes' onclick='ciphercode()'>",true);
+	makealert("how-to-make-boss-happy","Rendre le patron heureux","Pour le rendre heureux et gagner quelques pièces, tu peux :<br><br><input type='button' value='Répondre à des énigmes' onclick='ciphercode()'>",true);
 }
 
 function ciphercode() {
@@ -191,13 +218,13 @@ function ciphercode() {
 		codetocipher="Donner le nom de la formation du créateur.";
 	}
 	else if(cipherstep==2) {
-		codetocipher="Om s ept;f gi;; pg n;pvld";
+		codetocipher="Donner un chiffre entre 1 et 10000000000.";
 	}
 	else if(cipherstep==3) {
-		codetocipher="VGhlIHBsYW50IGlzIGZhbW91cyBiZWNhdXNlIG9mIHR<br>oZSBhYmlsaXR5IHRvIGN1cmUgc29tZSBkaXNlYXNlcw==";
+		codetocipher="On continue ?";
 	}
 	else if(cipherstep==4) {
-		codetocipher="towiiag g se   rir,oaoan   ft ofo srtod tddyi ot mdy lugelelmwon foemsthiuaa ttclntclga  bhhs";
+		codetocipher="C'est quoi déjà le prénom et le nom du créateur ?";
 	}
 
 	if(cipherstep<5) {
@@ -209,15 +236,8 @@ function ciphercode() {
 }
 function checkchipher() {
 
-	/*
-	
-		Don't cheat please!!!
-		PLEASE!!!
-		
-	*/
-
 	if(cipherstep==0) {
-		if($("#cipherthecodeanswer").val().toLowerCase()=="arthur gorjux") {
+		if($("#cipherthecodeanswer").val().toLowerCase() == "arthur gorjux") {
 			cipherstep++;
 			coins += 100;
 			closemessage();
@@ -228,47 +248,48 @@ function checkchipher() {
 		}
 	}
 	else if(cipherstep==1) {
-		if($("#cipherthecodeanswer").val().toLowerCase()=="m1ice") {
+		if($("#cipherthecodeanswer").val().toLowerCase() == "m1ice") {
 			cipherstep++;
-			coins += 500;
+			coins += 200;
 			closemessage();
-			alert("Juste ! Tu reçois 500 pièces !");
+			alert("Juste ! Tu reçois 200 pièces !");
 		}
 		else {
 			alert('Faux !');
 		}
 	}
 	else if(cipherstep==2) {
-		if($("#cipherthecodeanswer").val().toLowerCase()=="in a world full of blocks") {
+		if($("#cipherthecodeanswer").val().toLowerCase() != "") {
 			cipherstep++;
-			goldbar+=2000;
+			coins += 300;
 			closemessage();
-			alert("Correct! You get 2000 gold bars!"); 
+			alert("Juste ! Tu reçois 300 pièces !"); 
 		}
 		else {
-			alert('Wrong!');
+			alert('Faux !');
 		}
 	}
 	else if(cipherstep==3) {
-		if($("#cipherthecodeanswer").val().toLowerCase()=="the plant is famous because of the ability to cure some diseases") {
+		if($("#cipherthecodeanswer").val().toLowerCase() == "oui") {
 			cipherstep++;
-			goldbar+=2500;
 			closemessage();
-			alert("Correct! You get 2500 gold bars!"); 
+			$("#insidestorage").append('<br/><a href="javascript:showcv();">Voir CV complet</a>');
+			alert("Juste ! Tu as débloqué le CV, passe le voir !");
 		}
 		else {
-			alert('Wrong!');
+			alert('Faux !');
 		}
 	}
 	else if(cipherstep==4) {
-		if($("#cipherthecodeanswer").val().toLowerCase()=="the gold factory was built long time ago, and it is the most famous gold factory in the world") {
+		if($("#cipherthecodeanswer").val().toLowerCase()=="arthur gorjux") {
 			cipherstep++;
-			goldbar+=7500;
+			coins += 500;
 			closemessage();
-			alert("Correct! Because this one is a hard one, you get 7500 gold bars!"); 
+			alert("Juste ! Parce qu'elle était pas facile, tu reçois 500 pièces !"); 
+			can_buy_factory = true;
 		}
 		else {
-			alert('Wrong!');
+			alert('Faux !');
 		}
 	}
 }
